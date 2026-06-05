@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PolishCamera</title>
+    <meta
+      name="description"
+      content="Browser camera that detects objects and labels them in Polish or Russian."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"
+    ></script>
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">GitHub Pages Ready</p>
+          <h1>PolishCamera</h1>
+          <p class="hero-text" data-i18n="heroText">
+            Point the camera at an object and see its name on screen.
+          </p>
+        </div>
+
+        <div class="controls-card">
+          <label class="control">
+            <span data-i18n="languageLabel">Language</span>
+            <select id="languageSelect">
+              <option value="pl">Polski</option>
+              <option value="ru">Русский</option>
+            </select>
+          </label>
+
+          <label class="control">
+            <span data-i18n="cameraLabel">Camera</span>
+            <select id="cameraSelect">
+              <option value="environment" data-i18n-option="backCamera">Back camera</option>
+              <option value="user" data-i18n-option="frontCamera">Front camera</option>
+            </select>
+          </label>
+
+          <div class="button-row">
+            <button id="startButton" class="primary-button" type="button" data-i18n="startCamera">
+              Start camera
+            </button>
+            <button id="stopButton" class="secondary-button" type="button" data-i18n="stopCamera">
+              Stop
+            </button>
+          </div>
+
+          <p id="status" class="status" aria-live="polite"></p>
+        </div>
+      </header>
+
+      <main class="app-grid">
+        <section class="camera-card">
+          <div class="camera-stage">
+            <video id="video" autoplay playsinline muted></video>
+            <canvas id="overlay"></canvas>
+            <div id="emptyState" class="empty-state" data-i18n="emptyState">
+              Start the camera to begin object detection.
+            </div>
+          </div>
+        </section>
+
+        <aside class="results-card">
+          <div class="results-header">
+            <h2 data-i18n="resultsTitle">Detected objects</h2>
+            <span id="resultCount" class="result-count">0</span>
+          </div>
+          <ul id="resultsList" class="results-list"></ul>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>
