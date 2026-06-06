@@ -250,6 +250,10 @@ canvas {
   line-height: 1.5;
 }
 
+.empty-state[hidden] {
+  display: none !important;
+}
+
 .results-header {
   display: flex;
   align-items: center;

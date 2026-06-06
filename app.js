@@ -166,6 +166,11 @@ function setStatus(messageKey) {
   elements.status.textContent = text(messageKey);
 }
 
+function setEmptyStateVisible(isVisible) {
+  elements.emptyState.hidden = !isVisible;
+  elements.emptyState.setAttribute("aria-hidden", String(!isVisible));
+}
+
 function updateStaticText() {
   document.querySelectorAll("[data-i18n]").forEach((node) => {
     node.textContent = text(node.dataset.i18n);
@@ -366,7 +371,7 @@ function stopStream() {
 
   state.isRunning = false;
   elements.video.srcObject = null;
-  elements.emptyState.hidden = false;
+  setEmptyStateVisible(true);
   renderPredictions([]);
   setStatus("stopped");
 }
@@ -400,7 +405,7 @@ async function startCamera() {
     state.isRunning = true;
     elements.video.dataset.facingMode = state.facingMode;
     elements.video.srcObject = stream;
-    elements.emptyState.hidden = true;
+    setEmptyStateVisible(false);
 
     await elements.video.play();
     await new Promise((resolve) => {
@@ -457,4 +462,5 @@ elements.stopButton.addEventListener("click", stopStream);
 
 updateStaticText();
 renderPredictions([]);
+setEmptyStateVisible(true);
 setStatus("stopped");
