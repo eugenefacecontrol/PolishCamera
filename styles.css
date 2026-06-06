@@ -203,6 +203,43 @@ canvas {
   pointer-events: none;
 }
 
+.live-captions {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.live-caption-chip {
+  max-width: 100%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(22, 30, 22, 0.8);
+  border: 1px solid rgba(255, 250, 241, 0.18);
+  color: #fffaf1;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(10px);
+}
+
+.live-caption-name {
+  display: block;
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.live-caption-score {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.84rem;
+  color: rgba(255, 250, 241, 0.82);
+}
+
 .empty-state {
   display: grid;
   place-items: center;
@@ -264,6 +301,7 @@ canvas {
 
 .result-name {
   font-weight: 700;
+  font-size: 1.05rem;
 }
 
 .result-score {
@@ -307,6 +345,53 @@ canvas {
   }
 
   .camera-stage {
-    min-height: 280px;
+    min-height: 360px;
+    aspect-ratio: 3 / 4;
+  }
+
+  .live-captions {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    gap: 8px;
+  }
+
+  .live-caption-chip {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 18px;
+  }
+
+  .live-caption-name {
+    font-size: 1.18rem;
+  }
+
+  .live-caption-score {
+    font-size: 0.9rem;
+  }
+
+  .results-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .result-item {
+    padding: 16px;
+  }
+
+  .result-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .result-name {
+    font-size: 1.12rem;
+  }
+
+  .result-score,
+  .result-meta,
+  .status,
+  .control {
+    font-size: 1rem;
   }
 }

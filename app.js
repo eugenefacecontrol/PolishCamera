@@ -136,6 +136,7 @@ const elements = {
   status: document.getElementById("status"),
   video: document.getElementById("video"),
   overlay: document.getElementById("overlay"),
+  liveCaptions: document.getElementById("liveCaptions"),
   emptyState: document.getElementById("emptyState"),
   resultsList: document.getElementById("resultsList"),
   resultCount: document.getElementById("resultCount")
@@ -193,38 +194,82 @@ function resizeCanvas() {
   elements.overlay.height = height;
 }
 
+function drawRoundedRect(x, y, width, height, radius) {
+  const r = Math.min(radius, width / 2, height / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + width - r, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+  ctx.lineTo(x + width, y + height - r);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+  ctx.lineTo(x + r, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
 function drawPredictions(predictions) {
   resizeCanvas();
   ctx.clearRect(0, 0, elements.overlay.width, elements.overlay.height);
 
   const isFrontCamera = state.facingMode === "user";
   const canvasWidth = elements.overlay.width;
+  const baseFontSize = Math.max(20, Math.min(32, Math.round(canvasWidth * 0.036)));
+  const labelHeight = baseFontSize + 18;
 
   predictions.forEach((prediction) => {
     const [x, y, width, height] = prediction.bbox;
     const drawX = isFrontCamera ? canvasWidth - x - width : x;
     const label = `${translateClass(prediction.class, state.language)} ${Math.round(prediction.score * 100)}%`;
 
-    ctx.lineWidth = 3;
+    ctx.lineWidth = Math.max(3, Math.round(canvasWidth * 0.004));
     ctx.strokeStyle = "#ffb14d";
     ctx.fillStyle = "rgba(255, 177, 77, 0.18)";
     ctx.strokeRect(drawX, y, width, height);
     ctx.fillRect(drawX, y, width, height);
 
-    ctx.font = "700 18px Avenir Next, Segoe UI, sans-serif";
-    const paddingX = 10;
-    const paddingY = 7;
+    ctx.font = `800 ${baseFontSize}px Avenir Next, Segoe UI, sans-serif`;
+    const paddingX = 14;
     const textWidth = ctx.measureText(label).width;
-    const labelWidth = textWidth + paddingX * 2;
-    const labelHeight = 32;
-    const labelY = Math.max(0, y - labelHeight - 6);
+    const labelWidth = Math.min(width, textWidth + paddingX * 2);
+    const labelY = y - labelHeight - 8 >= 0 ? y - labelHeight - 8 : y + 8;
+    const textY = labelY + labelHeight / 2 + baseFontSize * 0.34;
 
-    ctx.fillStyle = "#255f38";
-    ctx.fillRect(drawX, labelY, labelWidth, labelHeight);
+    ctx.fillStyle = "rgba(18, 34, 22, 0.92)";
+    drawRoundedRect(drawX, labelY, labelWidth, labelHeight, 12);
+    ctx.fill();
 
     ctx.fillStyle = "#fffaf1";
-    ctx.fillText(label, drawX + paddingX, labelY + 22);
+    ctx.textBaseline = "alphabetic";
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.25)";
+    ctx.lineWidth = 4;
+    ctx.strokeText(label, drawX + paddingX, textY, labelWidth - paddingX * 2);
+    ctx.fillText(label, drawX + paddingX, textY, labelWidth - paddingX * 2);
   });
+}
+
+function renderLiveCaptions(predictions) {
+  elements.liveCaptions.innerHTML = "";
+
+  predictions
+    .slice()
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 2)
+    .forEach((prediction) => {
+      const chip = document.createElement("div");
+      chip.className = "live-caption-chip";
+
+      const translated = translateClass(prediction.class, state.language);
+      const score = `${Math.round(prediction.score * 100)}%`;
+
+      chip.innerHTML = `
+        <span class="live-caption-name">${translated}</span>
+        <span class="live-caption-score">${text("confidence")}: ${score}</span>
+      `;
+
+      elements.liveCaptions.appendChild(chip);
+    });
 }
 
 function renderPredictions(predictions) {
@@ -233,6 +278,7 @@ function renderPredictions(predictions) {
   elements.resultCount.textContent = String(predictions.length);
 
   if (!predictions.length) {
+    renderLiveCaptions([]);
     const empty = document.createElement("li");
     empty.className = "result-item empty-results";
     empty.textContent = text("noObjects");
@@ -262,6 +308,7 @@ function renderPredictions(predictions) {
       elements.resultsList.appendChild(item);
     });
 
+  renderLiveCaptions(predictions);
   drawPredictions(predictions);
 }
 
