@@ -12,6 +12,15 @@ GitHub Pages URL:
 - Detects objects in real time in the browser
 - Shows bounding boxes and translated labels
 - Lets you switch the interface and object labels between Polish and Russian
+- Includes automated unit tests and GitHub Actions CI
+
+## Project Structure
+
+- `index.html` - static GitHub Pages entrypoint
+- `app.js` - browser app wiring and camera lifecycle
+- `src/app-logic.js` - pure, testable logic for localization and prediction processing
+- `tests/app-logic.test.js` - unit tests for translation, sorting, filtering, and score formatting
+- `.github/workflows/ci.yml` - GitHub Actions workflow that runs tests on push and pull request
 
 ## How it works
 
@@ -23,6 +32,33 @@ The app uses TensorFlow.js with the COCO-SSD object detection model. Detection r
 2. Allow camera access in the browser.
 3. Choose the language: `Polski` or `Русский`.
 4. Point the camera at everyday objects.
+
+## Testing
+
+This project now includes automated unit tests that run both locally and on GitHub.
+
+Current test coverage includes:
+
+- UI text localization for Polish and Russian
+- Fallback behavior when a translation is missing
+- Object label translation logic
+- Prediction sorting by confidence
+- Live caption selection for top detections
+- Detection filtering by minimum confidence
+- Confidence formatting shown in the interface
+
+Run tests locally:
+
+```bash
+npm test
+```
+
+GitHub CI:
+
+- Every push to `main` runs the test suite
+- Every pull request runs the same checks before merge
+
+This gives you a clean story for LinkedIn too: the project is not only deployed on GitHub Pages, but also covered by automated tests and validated in GitHub Actions.
 
 ## Notes
 
